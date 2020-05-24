@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Adoption option</title>
+        <link rel="stylesheet" href="style.css">
+        <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    </head>
+    <body>
+        <div id="app">
+            <nav>
+                <div id="logo">
+                    <h1>Eddy's pet adoption option</h1>
+                </div>
+                <div id="dropdown">
+                    <button id="views">
+                        <i class="material-icons">
+                            keyboard_arrow_down
+                        </i>
+                    </button>
+                    <div class="dropdowncontent">
+                        <a href="#!" class="active" v-on:click="impoundclick">Impound</a>
+                        <a href="#!" class="active" v-on:click="adoptionclick">Adoption</a>
+                        <a href="#!" class="active" v-on:click="relistclick">Re-List</a>
+                    </div>
+                </div>
+
+                
+            </nav>
+
+            <main>
+                <div class="wrapper">
+                    <div id="card1" class="card" v-if="cardvisible">
+                        <div id="impound">Impound</div>
+                        <div id="tabcontent">
+                            <form id="petform">
+                                <div id="left">
+                                    <select id="animaldropdown" v-model="newAnimal"> 
+                                        <option disabled selected value> -- select an animal -- </option>
+                                        <option value="dog">Dog</option>
+                                        <option value="cat">Cat</option>
+                                    </select>
+                                    <label>Name</label>
+                                    <input class="box" type="text" v-model="newName">
+                                    <label>Breed</label>
+                                    <input class="box" type="text" v-model="newBreed">
+                                    <label>Age</label>
+                                    <input class="box" type="text" v-model="newAge">
+                                    <label>Gender</label>
+                                    <input class="box" type="text" v-model="newGender">
+                                    <label>Color</label>
+                                    <input class="box"  type="text" v-model="newColor">
+                                    <div id="errors" v-if="errors.length">
+                                        There was errors trying to save this animal:
+                                        <ul>
+                                            <li v-for="error in errors">
+                                                {{ error }}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <button v-on:click="goButtonClicked">Add for adoption</button>
+                                </div>
+                                <div id="right">
+                                    <label>Description</label>
+                                    <textarea id="description" v-model="newDescription">
+
+                                    </textarea>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="animal-flex" v-if="animalcards">
+                        <div id="adoption">Adopt a friend</div>
+                        <div class="animal-card" v-for="(animal, index) in nonreservedanimals">
+                            <img :src="getImg(animal)" v-bind:alt="animal">
+                            <div class="cardcontent">
+                                <ul>
+                                    
+                                    <li class="animalname" >
+                                        <strong> {{ animal.name }} </strong>
+                                     </li>
+                                     <li class="animaltype" >
+                                        {{ animal.animal }}
+                                    </li>
+                                    <li class="animalbreed" >
+                                        {{ animal.breed }}
+                                    </li>
+                                    <li class="animalage" >
+                                        {{ animal.age }}
+                                    </li>
+                                    <li class="animalgender" >
+                                        {{ animal.gender }}
+                                    </li>
+                                    <li class="animalcolor" >
+                                        {{ animal.color }}
+                                    </li>
+                                    <li class="animaldescription" >
+                                        {{ animal.description }}
+                                    </li>
+                                    <button v-on:click="markScheduled(index)">Reserve</button>
+                                </ul>
+                                <div id="errors" v-if="errors.length">
+                                    There was errors trying to save this animal:
+                                    <ul>
+                                        <li v-for="error in errors">
+                                            {{ error }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="animal-flex" v-if="relistcard">
+                        <div id="relist">Re-list an animal</div>
+                        <div class="animal-card" v-for="(animal, index) in reservedanimals">
+                            <img :src="getreservedImg(animal)" v-bind:alt="animal">
+                            <div class="cardcontent">
+                                <ul>
+                                    
+                                    <li class="animalname" >
+                                        <strong> {{ animal.name }} </strong>
+                                    </li>
+                                    <li class="animaltype" >
+                                        {{ animal.animal }}
+                                    </li>
+                                    <li class="animalbreed" >
+                                        {{ animal.breed }}
+                                    </li>
+                                    <li class="animalage" >
+                                        {{ animal.age }}
+                                    </li>
+                                    <li class="animalgender" >
+                                        {{ animal.gender }}
+                                    </li>
+                                    <li class="animalcolor" >
+                                        {{ animal.color }}
+                                    </li>
+                                    <li class="animaldescription" >
+                                        {{ animal.description }}
+                                    </li>
+                                    <button v-on:click="markUnscheduled(index)">Relist</button>
+                                    <button v-on:click="deleteAnimal(index)">Delete</button>
+                                </ul>
+                            </div>
+
+                        </div>
+                        <form id="petform2">
+                            <div id="left">
+                                <label>Name</label>
+                                <input class="box" type="text" v-model="updateName">
+                                <label>Age</label>
+                                <input class="box" type="text" v-model="updateAge">
+                                <label>Color</label>
+                                <input class="box" type="text" v-model="updateColor">
+                                <div id="errors" v-if="errors.length">
+                                    There was errors trying to save this animal:
+                                    <ul>
+                                        <li v-for="error in errors">
+                                            {{ error }}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <button class="submit" v-on:click="submitButtonClicked">Submit Changes</button>
+                            </div>
+                            <div id="right">
+                                <label>Description</label>
+                                <textarea id="description2" v-model="updateDescription">
+                                    
+                                </textarea>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+            <footer></footer>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="app.js"></script>
+    </body>
+</html>
